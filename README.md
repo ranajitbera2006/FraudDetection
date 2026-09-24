@@ -11,6 +11,12 @@
 
 ---
 
+## Preview
+
+![VerifAI Dashboard Demo](./frontend/public/websiteDemo.png)
+
+---
+
 ## Architecture Overview
 
 VerifAI runs on a hybrid micro-architecture that decouples client rendering, API coordination, and data science model execution:
@@ -135,7 +141,7 @@ npm run dev
 ```
 
 * **Frontend**: `http://localhost:3000`
-* **Backend API**: `http://localhost:10000`
+* **Backend API**: `http://localhost:5001`
 
 ---
 
