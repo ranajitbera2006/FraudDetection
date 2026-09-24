@@ -21,7 +21,7 @@ const senderScema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    tranction: {
+    transaction: {
       type: String,
       required: true,
       enum: ["payment", "transfer"],

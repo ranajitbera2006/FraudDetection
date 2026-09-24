@@ -8,7 +8,7 @@ export const SenderController = async (req, res) => {
       receiverPhone,
       amount,
       preBalance,
-      tranction,
+      transaction,
     } = req.body;
     if (
       !fullname ||
@@ -16,7 +16,7 @@ export const SenderController = async (req, res) => {
       !receiverPhone ||
       !amount ||
       !preBalance ||
-      !tranction
+      !transaction
     ) {
       return res
         .status(400)
@@ -24,8 +24,8 @@ export const SenderController = async (req, res) => {
     }
 
     if (
-      tranction.toLowerCase() !== "payment" &&
-      tranction.toLowerCase() !== "transfer"
+      transaction.toLowerCase() !== "payment" &&
+      transaction.toLowerCase() !== "transfer"
     ) {
       return res.status(400).json({ error: "Please choose from below!" });
     }
@@ -35,7 +35,7 @@ export const SenderController = async (req, res) => {
       receiverPhone,
       amount,
       preBalance,
-      tranction,
+      transaction,
     });
     if (!newSender) {
       return res.status(404).json({ error: "Please enter your details!" });
