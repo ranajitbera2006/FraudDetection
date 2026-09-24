@@ -8,7 +8,11 @@ import pandas as pd
 from Feature_engineering import Feature_engineering
 
 ROOT = Path(__file__).resolve().parent.parent
-MODEL_PATH = ROOT / "models" / "random_forest.pkl"
+MODEL_CANDIDATES = [
+    ROOT / "src" / "models" / "random_forest.pkl",
+    ROOT / "models" / "random_forest.pkl",
+]
+MODEL_PATH = next((path for path in MODEL_CANDIDATES if path.exists()), MODEL_CANDIDATES[0])
 model = joblib.load(MODEL_PATH)
 
 FEATURE_COLUMNS = [
