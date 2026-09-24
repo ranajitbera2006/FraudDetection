@@ -18,7 +18,9 @@ const getPythonCommand = () => {
   if (process.env.PYTHON_PATH) return process.env.PYTHON_PATH;
   if (fs.existsSync("/usr/local/bin/python3")) return "/usr/local/bin/python3";
   if (fs.existsSync("/usr/bin/python3")) return "/usr/bin/python3";
-  return "python";
+  if (fs.existsSync("/usr/local/bin/python")) return "/usr/local/bin/python";
+  if (fs.existsSync("/usr/bin/python")) return "/usr/bin/python";
+  return "python3";
 };
 
 const getFraudPrediction = async (transactionData) => {

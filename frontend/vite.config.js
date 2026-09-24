@@ -9,7 +9,7 @@ export default defineConfig({
     port: 3000,
     proxy: {
       "/api": {
-        target: "https://verifai-vuh5.onrender.com",
+        target: process.env.VITE_API_URL || "http://localhost:10000",
         changeOrigin: true,
         secure: false,
       },
