@@ -1,6 +1,12 @@
 import { useState } from "react";
 import toast from "react-hot-toast";
 
+const isValidPhoneNumber = (value) => {
+  if (!value) return false;
+  const normalized = String(value).trim();
+  return /^[6-9]\d{9}$/.test(normalized);
+};
+
 const useFraudCheck = () => {
   const [loading, setLoading] = useState(false);
 
@@ -12,7 +18,6 @@ const useFraudCheck = () => {
     preBalance,
     amount,
   }) => {
-    // Validation
     if (
       !fullname ||
       !transaction ||
@@ -22,11 +27,31 @@ const useFraudCheck = () => {
       !amount
     ) {
       toast.error("Please fill the required fields!");
-      return false;
+      return null;
     }
+
+    if (!isValidPhoneNumber(senderPhone)) {
+      toast.error(
+        "Sender phone number is invalid. Use 10 digits starting with 6-9.",
+      );
+      return null;
+    }
+
+    if (!isValidPhoneNumber(receiverPhone)) {
+      toast.error(
+        "Receiver phone number is invalid. Use 10 digits starting with 6-9.",
+      );
+      return null;
+    }
+
+    if (String(senderPhone).trim() === String(receiverPhone).trim()) {
+      toast.error("Sender and receiver phone numbers cannot be the same.");
+      return null;
+    }
+
     if (Number(preBalance) < Number(amount)) {
       toast.error("Insufficient balance.");
-      return false;
+      return null;
     }
 
     setLoading(true);
@@ -56,11 +81,12 @@ const useFraudCheck = () => {
       if (data.error) {
         throw new Error(data.error);
       }
-      return true;
+
+      return data;
     } catch (error) {
       console.error("Error:", error);
       toast.error(error.message || "Failed to send data.");
-      return false;
+      return null;
     } finally {
       setLoading(false);
     }

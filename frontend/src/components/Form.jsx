@@ -12,6 +12,8 @@ const Form = () => {
   const [preBalance, setpreBalance] = useState("");
   const [amount, setAmount] = useState("");
   const [openMenu, setOpenMenu] = useState(false);
+  const [result, setResult] = useState(null);
+
   const handletransactionChange = (selectedTransaction) => {
     setTransaction(selectedTransaction);
     setOpenMenu(false);
@@ -19,7 +21,7 @@ const Form = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const success = await fraudCheck({
+    const response = await fraudCheck({
       fullname,
       transaction,
       senderPhone,
@@ -27,15 +29,31 @@ const Form = () => {
       preBalance,
       amount,
     });
-    if (success) {
-      setFullname("");
-      setTransaction("");
-      setSenderPhone("");
-      setReceiverPhone("");
-      setpreBalance("");
-      setAmount("");
-      toast.success("Your data successfully! Wait for checking...");
+
+    if (!response) return;
+
+    setResult(response);
+    setFullname("");
+    setTransaction("");
+    setSenderPhone("");
+    setReceiverPhone("");
+    setpreBalance("");
+    setAmount("");
+
+    if (response.isFraud) {
+      toast.error(
+        `Suspicious transaction detected. Fraud probability: ${(
+          response.probability * 100
+        ).toFixed(2)}%`,
+      );
+      return;
     }
+
+    toast.success(
+      `Transaction looks safe. Fraud probability: ${(
+        response.probability * 100
+      ).toFixed(2)}%`,
+    );
   };
 
   return (
@@ -150,19 +168,35 @@ const Form = () => {
                 </ul>
               )}
             </div>
-            <div className="flex justify-between">
+            {result && (
+              <div
+                className={`rounded-xl border p-3 text-sm ${
+                  result.isFraud
+                    ? "border-red-400 bg-red-500/10 text-red-200"
+                    : "border-emerald-400 bg-emerald-500/10 text-emerald-200"
+                }`}
+              >
+                <div className="flex items-center justify-between gap-3">
+                  <span className="font-semibold">
+                    {result.isFraud ? "Suspicious" : "Safe"}
+                  </span>
+                  <span className="rounded-full bg-black/20 px-2 py-1 text-xs">
+                    {(result.probability * 100).toFixed(2)}%
+                  </span>
+                </div>
+                <p className="mt-2 text-xs opacity-90">
+                  {result.isFraud
+                    ? "This transaction is flagged as potentially fraudulent."
+                    : "This transaction appears legitimate based on current risk scoring."}
+                </p>
+              </div>
+            )}
+            <div className="flex justify-center">
               <button type="submit" className="btn btn-success">
                 {loading ? (
                   <div className="loading loading-spinner" />
                 ) : (
                   "Check"
-                )}
-              </button>
-              <button type="submit" className="btn btn-primary">
-                {loading ? (
-                  <div className="loading loading-spinner" />
-                ) : (
-                  "Probability"
                 )}
               </button>
             </div>

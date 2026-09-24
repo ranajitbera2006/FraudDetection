@@ -6,7 +6,7 @@ import senderRoute from "./routes/sender.route.js";
 
 const app = express();
 app.use(express.json());
-const port = process.env.PORT || 8080;
+const port = Number(process.env.PORT) || 5001;
 
 app.use("/api/sender", senderRoute);
 
