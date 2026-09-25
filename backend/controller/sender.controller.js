@@ -1,5 +1,6 @@
 import { spawn } from "node:child_process";
 import path from "node:path";
+import fs from "node:fs";
 import { fileURLToPath } from "node:url";
 import { Sender } from "../model/sender.model.js";
 
@@ -13,15 +14,21 @@ const __dirname = path.dirname(__filename);
 const projectRoot = path.resolve(__dirname, "../../");
 const pythonScript = path.resolve(projectRoot, "src/Main/predictor.py");
 
+const getPythonCommand = () => {
+  if (process.env.PYTHON_PATH) return process.env.PYTHON_PATH;
+  if (fs.existsSync("/usr/local/bin/python3")) return "/usr/local/bin/python3";
+  if (fs.existsSync("/usr/bin/python3")) return "/usr/bin/python3";
+  if (fs.existsSync("/usr/local/bin/python")) return "/usr/local/bin/python";
+  if (fs.existsSync("/usr/bin/python")) return "/usr/bin/python";
+  return "python3";
+};
+
 const getFraudPrediction = async (transactionData) => {
   return new Promise((resolve, reject) => {
-    const pythonProcess = spawn(
-      process.env.PYTHON_PATH || "python",
-      [pythonScript],
-      {
-        cwd: projectRoot,
-      },
-    );
+    const pythonCommand = getPythonCommand();
+    const pythonProcess = spawn(pythonCommand, [pythonScript], {
+      cwd: projectRoot,
+    });
 
     let stdout = "";
     let stderr = "";
@@ -152,6 +159,9 @@ export const SenderController = async (req, res) => {
     });
   } catch (error) {
     console.log("Error in SenderController ", error.message);
-    return res.status(500).json({ error: "Internal server error!" });
+    return res.status(500).json({
+      error: "Internal server error!",
+      details: error.message,
+    });
   }
 };

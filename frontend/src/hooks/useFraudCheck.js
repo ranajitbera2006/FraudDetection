@@ -1,6 +1,13 @@
 import { useState } from "react";
 import toast from "react-hot-toast";
 
+const API_BASE = import.meta.env.VITE_API_URL || "";
+const getApiUrl = () => {
+  if (API_BASE)
+    return `${API_BASE.replace(/\/$/, "")}/api/sender/sender-details`;
+  return "/api/sender/sender-details";
+};
+
 const isValidPhoneNumber = (value) => {
   if (!value) return false;
   const normalized = String(value).trim();
@@ -57,7 +64,7 @@ const useFraudCheck = () => {
     setLoading(true);
 
     try {
-      const res = await fetch("/api/sender/sender-details", {
+      const res = await fetch(getApiUrl(), {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -72,7 +79,22 @@ const useFraudCheck = () => {
         }),
       });
 
-      const data = await res.json();
+      const rawText = await res.text();
+
+      if (!rawText) {
+        throw new Error(
+          "No response from backend. Check the Render backend URL.",
+        );
+      }
+
+      let data;
+      try {
+        data = JSON.parse(rawText);
+      } catch {
+        throw new Error(
+          "The backend did not return JSON. Please check the Render backend URL.",
+        );
+      }
 
       if (!res.ok) {
         throw new Error(data.error || "Something went wrong");

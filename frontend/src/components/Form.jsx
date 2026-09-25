@@ -62,8 +62,11 @@ const Form = () => {
         <form onSubmit={handleSubmit}>
           <div className=" p-5 rounded-2xl space-y-4 shadow-mauve-950 shadow-xl">
             <div className="pt-7">
+              <h1 className="text-center font-bold text-2xl pb-0.5">
+                Welcome to Verif<span className="text-green-400">AI</span>
+              </h1>
               <h1 className="text-center font-bold text-2xl pb-2">
-                Check Here is it fraud or not
+                Check whether the tranction fraud or not
               </h1>
             </div>
 
